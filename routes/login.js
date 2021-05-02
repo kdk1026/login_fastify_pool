@@ -1,4 +1,5 @@
 const pool = require('../utill/mysql_pool.js');
+const bcrypt = require('bcrypt');
 
 module.exports = function(fastify, opts, done) {
 
@@ -8,6 +9,7 @@ module.exports = function(fastify, opts, done) {
 
     fastify.post('/', function(request, reply) {
         let email = request.body.email;
+        let password = request.body.password;
 
         pool.getConnection(function(err, conn) {
             conn.query('select * from user where email=?', [email], function(err, rows, fields) {
@@ -16,6 +18,13 @@ module.exports = function(fastify, opts, done) {
                 }
 
                 if (rows.length) {
+                    let isPasswordCompare = bcrypt.compareSync(password, rows[0].pw);
+
+                    if ( !isPasswordCompare ) {
+                        reply.send( {success : false} );
+                        return false;
+                    }
+
                     let user = {
                         email : rows[0].email,
                         name : rows[0].name

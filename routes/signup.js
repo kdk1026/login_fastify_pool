@@ -1,4 +1,5 @@
 const pool = require('../utill/mysql_pool.js');
+const bcrypt = require('bcrypt');
 
 module.exports = function(fastify, opts, done) {
 
@@ -11,10 +12,13 @@ module.exports = function(fastify, opts, done) {
     });
 
     fastify.post('/', function(request, reply) {
+        const saltRounds = 10;
+        let encryptPassword = bcrypt.hashSync(request.body.password, saltRounds);
+
         let intputData = {
             email : request.body.email,
             name : request.body.name,
-            pw : request.body.password
+            pw : encryptPassword
         };
 
         pool.getConnection(function(err, conn) {

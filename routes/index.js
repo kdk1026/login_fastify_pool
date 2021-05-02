@@ -15,6 +15,7 @@ module.exports = function(fastify, opts, done) {
     fastify.register(require('./login'), { prefix: '/login' });
     fastify.register(require('./logout'), { prefix: '/logout' });
     fastify.register(require('./signup'), { prefix: '/signup' });
+    fastify.register(require('./test/test'), { prefix: '/test' });
 
     done();
 
